@@ -27,7 +27,7 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0D2B1E), // سبز تیره
+      backgroundColor: const Color(0xFF0D2B1E),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -91,11 +91,13 @@ class DashboardScreen extends StatelessWidget {
                   },
                   icon: const Icon(Icons.account_tree),
                   label: const Text('مشاهده شجره‌نامه خاندان',
-                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                      style:
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.amber,
                     foregroundColor: Colors.black87,
-                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 15),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30)),
                   ),
@@ -106,8 +108,9 @@ class DashboardScreen extends StatelessWidget {
                   child: const Text('مدیر ارشد و طراح: حمید حسینی',
                       style: TextStyle(color: Colors.amber, fontSize: 14)),
                   style: OutlinedButton.styleFrom(
-                    side(color: Colors.amber),
-                    padding: const EdgeInsets.symmetric(horizontal:.symmetric(horizontal: 25, vertical: 12),
+                    side: const BorderSide(color: Colors.amber),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 25, vertical: 12),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30)),
                   ),
