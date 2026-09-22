@@ -192,7 +192,6 @@ class FamilyTreePage extends StatelessWidget {
     );
   }
   Widget _buildPersonCard({
-  required BuildContext context,
     required String name,
     required String role,
     String? birthDate,
@@ -213,7 +212,7 @@ class FamilyTreePage extends StatelessWidget {
       birthDate: birthDate,
       deathDate: deathDate,
       spouse: spouse,
-      description: children.isEmpty ? role : role + ' — فرزندان: ' + children.join('، '),
+      description: (children == null || children.isEmpty) ? role : role + ' — فرزندان: ' + children.join('، '),
     ));
   },
   child: Container(
