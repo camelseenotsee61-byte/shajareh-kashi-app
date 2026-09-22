@@ -9,18 +9,13 @@ class ShajarehApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'شجره‌نامه خاندان کاشی حسینی',
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'Tahoma',
-        primarySwatch: Colors.green,
-        scaffoldBackgroundColor: const Color(0xFF0F3822),
-      ),
-      home: const DashboardScreen(),
+      home: DashboardScreen(),
     );
   }
 }
+
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
@@ -41,7 +36,6 @@ class DashboardScreen extends StatelessWidget {
                   'شجره‌نامه خاندان کاشی حسینی',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontFamily: 'Tahoma',
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -63,11 +57,14 @@ class DashboardScreen extends StatelessWidget {
                   ),
                   child: const Column(
                     children: [
-                      Text('📌 اهداف برنامه:',
-                          style: TextStyle(
-                              color: Colors.amber,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold)),
+                      Text(
+                        '📌 اهداف برنامه:',
+                        style: TextStyle(
+                          color: Colors.amber,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       SizedBox(height: 10),
                       Text(
                         '• حفظ و انتقال شجره‌نامه به نسل‌های آینده\n'
@@ -75,7 +72,11 @@ class DashboardScreen extends StatelessWidget {
                         '• دست‌گیری از نیازمندان با حفظ آبرو و حرمت\n'
                         '• آلبوم خاطرات و دل‌نوشته‌های ماندگار اعضا',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 14, height: 1.8),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          height: 1.8,
+                        ),
                       ),
                     ],
                   ),
@@ -86,38 +87,74 @@ class DashboardScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const FamilyTreePage()),
+                        builder: (context) => FamilyTreePage(),
+                      ),
                     );
                   },
                   icon: const Icon(Icons.account_tree),
-                  label: const Text('مشاهده شجره‌نامه خاندان',
-                      style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                  label: const Text(
+                    'مشاهده شجره‌نامه خاندان',
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.amber,
                     foregroundColor: Colors.black87,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 15),
+                      horizontal: 30,
+                      vertical: 15,
+                    ),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30)),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 15),
                 OutlinedButton(
                   onPressed: () {},
-                  child: const Text('مدیر ارشد و طراح: حمید حسینی',
-                      style: TextStyle(color: Colors.amber, fontSize: 14)),
+                  child: const Text(
+                    'مدیر ارشد و طراح: حمید حسینی',
+                    style: TextStyle(color: Colors.amber, fontSize: 14),
+                  ),
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Colors.amber),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 25, vertical: 12),
+                      horizontal: 25,
+                      vertical: 12,
+                    ),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30)),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
                   ),
                 ),
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class FamilyTreePage extends StatelessWidget {
+  FamilyTreePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF0D2B1E),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF0D2B1E),
+        title: const Text(
+          'شجره‌نامه خاندان',
+          style: TextStyle(color: Colors.amber),
+        ),
+        iconTheme: const IconThemeData(color: Colors.amber),
+      ),
+      body: const Center(
+        child: Text(
+          '🌳\nدرخت خانوادگی به‌زودی تکمیل می‌شود',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.white, fontSize: 18, height: 2),
         ),
       ),
     );
