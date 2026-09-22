@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'family_member.dart';
 
 void main() {
   runApp(const ShajarehApp());
