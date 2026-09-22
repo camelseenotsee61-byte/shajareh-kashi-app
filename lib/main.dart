@@ -549,3 +549,79 @@ class FamilyTreePage extends StatelessWidget {
     );
 }
 }
+// --- تابع نمایش دیالوگ مشخصات فرد ---
+void showMemberDetails(BuildContext context, FamilyMember member) {
+  showDialog(
+    context: context,
+    builder: (BuildContext ctx) {
+      return Directionality(
+        textDirection: TextDirection.rtl,
+        child: AlertDialog(
+          backgroundColor: const Color(0xFF132B25),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Color(0xFFD4AF37), width: 1.5),
+          ),
+          title: Text(
+            member.name,
+            style: const TextStyle(
+              color: Color(0xFFD4AF37),
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (member.birthDate != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    '🎂 تاریخ تولد: ${member.birthDate}',
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                  ),
+                ),
+              if (member.deathDate != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    '🕊️ یادبود درگذشتگان: ${member.deathDate}',
+                    style: const TextStyle(color: Colors.white70, fontSize: 14),
+                  ),
+                ),
+              if (member.spouse != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    '💍 همسر: ${member.spouse}',
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                  ),
+                ),
+              if (member.description != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    '📝 توضیحات: ${member.description}',
+                    style: const TextStyle(color: Colors.white60, fontSize: 13),
+                  ),
+                ),
+            ],
+          ),
+          actions: [
+            Center(
+              child: TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text(
+                  'بستن',
+                  style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
