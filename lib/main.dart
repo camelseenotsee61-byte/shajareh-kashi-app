@@ -504,6 +504,7 @@ class FamilyTreePage extends StatelessWidget {
         ),
       ),
     );
+    } 
     void _showHelpDialog(BuildContext context) {
     showDialog(
       context: context,
