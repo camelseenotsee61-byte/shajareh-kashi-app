@@ -332,14 +332,23 @@ class FamilyTreePage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: const Color(0xFF0D2B1E),
         appBar: AppBar(
-          backgroundColor: const Color(0xFF0D2B1E),
-          elevation: 0,
-          title: const Text(
-            'شجره‌نامه خاندان کاشی حسینی',
-            style: TextStyle(color: Colors.amber, fontSize: 16),
-          ),
-          iconTheme: const IconThemeData(color: Colors.amber),
-        ),
+  backgroundColor: const Color(0xFF0D2B1E),
+  elevation: 0,
+  title: const Text(
+    'شجره‌نامه خاندان کاشی حسینی',
+    style: TextStyle(color: Colors.amber, fontSize: 16),
+  ),
+  iconTheme: const IconThemeData(color: Colors.amber),
+  actions: [
+    IconButton(
+      icon: const Icon(Icons.help_outline),
+      onPressed: () {
+        _showHelpDialog(context);
+      },
+    ),
+  ],
+),
+
         body: SafeArea(
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
@@ -495,5 +504,46 @@ class FamilyTreePage extends StatelessWidget {
         ),
       ),
     );
-  }
+    void _showHelpDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF0D2B1E),
+        title: const Text(
+          'راهنمای نرم‌افزار 💡',
+          style: TextStyle(color: Colors.amber, fontSize: 18),
+          textAlign: TextAlign.right,
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text(
+                'این برنامه گنجینه‌ای برای ثبت و ماندگاری شجره‌نامه خاندان کاشی حسینی است.',
+                style: TextStyle(color: Colors.white, fontSize: 13, height: 1.6),
+                textAlign: TextAlign.right,
+              ),
+              SizedBox(height: 12),
+              Text('🎂 : تاریخ تولد', style: TextStyle(color: Colors.white70, fontSize: 13)),
+              Text('🕊 : یادبود درگذشتگان', style: TextStyle(color: Colors.white70, fontSize: 13)),
+              Text('💍 : همسر', style: TextStyle(color: Colors.white70, fontSize: 13)),
+              Text('👥 : فرزندان', style: TextStyle(color: Colors.white70, fontSize: 13)),
+              SizedBox(height: 14),
+              Text(
+                'طراح و مدیر پروژه: حمید حسینی',
+                style: TextStyle(color: Colors.amber, fontSize: 13, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.right,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('بستن', style: TextStyle(color: Colors.amber)),
+          ),
+        ],
+      ),
+    );
+}
 }
