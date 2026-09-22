@@ -191,8 +191,8 @@ class FamilyTreePage extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildPersonCard({
+  required BuildContext context,
     required String name,
     required String role,
     String? birthDate,
@@ -206,7 +206,18 @@ class FamilyTreePage extends StatelessWidget {
         ? Colors.amber
         : (isDeceased ? Colors.white60 : Colors.tealAccent);
 
-    return Container(
+    return InkWell(
+  onTap: () {
+    showMemberDetails(context, FamilyMember(
+      name: name,
+      birthDate: birthDate,
+      deathDate: deathDate,
+      spouse: spouse,
+      description: children.isEmpty ? role : role + ' — فرزندان: ' + children.join('، '),
+    ));
+  },
+  child: Container(
+
       margin: const EdgeInsets.symmetric(vertical: 6),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -323,8 +334,9 @@ class FamilyTreePage extends StatelessWidget {
           ],
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
