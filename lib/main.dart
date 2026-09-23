@@ -333,7 +333,8 @@ class FamilyTreePage extends StatelessWidget {
           ],
         ],
       ),
-    ),
+    ), 
+  ),        
   );
 }
 
