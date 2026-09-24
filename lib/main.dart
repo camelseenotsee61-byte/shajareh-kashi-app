@@ -427,7 +427,6 @@ class FamilyTreePage extends StatelessWidget {
           ),
           iconTheme: const IconThemeData(color: Colors.amber),
           actions: [
-            // دکمه جستجو
             IconButton(
               tooltip: 'جستجوی اعضا',
               icon: const Icon(Icons.search_rounded),
@@ -486,7 +485,6 @@ class FamilyTreePage extends StatelessWidget {
               _buildSectionTitle(
                   'نسل سوم: فرزندان و شاخه‌های خانواده', 'برادران، خواهران و همسران محترم'),
 
-              // حسن کاشی حسینی
               _buildPersonCard(
                 name: 'مرحوم حسن کاشی حسینی',
                 role: 'فرزند ارشد خانواده',
@@ -503,7 +501,6 @@ class FamilyTreePage extends StatelessWidget {
                 ],
               ),
 
-              // حسین کاشی حسینی
               _buildPersonCard(
                 name: 'مرحوم حسین کاشی حسینی',
                 role: 'فرزند خانواده',
@@ -519,7 +516,6 @@ class FamilyTreePage extends StatelessWidget {
                 ],
               ),
 
-              // علی کاشی حسینی
               _buildPersonCard(
                 name: 'جناب علی کاشی حسینی',
                 role: 'فرزند خانواده',
@@ -532,7 +528,6 @@ class FamilyTreePage extends StatelessWidget {
                 ],
               ),
 
-              // صغرا کاشی حسینی
               _buildPersonCard(
                 name: 'سرکار خانم صغرا کاشی حسینی',
                 role: 'فرزند خانواده',
@@ -543,7 +538,6 @@ class FamilyTreePage extends StatelessWidget {
                 ],
               ),
 
-              // معصومه کاشی حسینی
               _buildPersonCard(
                 name: 'سرکار خانم معصومه کاشی حسینی',
                 role: 'فرزند خانواده',
@@ -556,7 +550,6 @@ class FamilyTreePage extends StatelessWidget {
                 ],
               ),
 
-              // فاطمه کاشی حسینی
               _buildPersonCard(
                 name: 'سرکار خانم فاطمه کاشی حسینی',
                 role: 'فرزند خانواده',
@@ -569,7 +562,6 @@ class FamilyTreePage extends StatelessWidget {
                 ],
               ),
 
-              // خانواده حمید حسینی (کارت شاخص و ویژه)
               _buildPersonCard(
                 name: 'جناب حمید حسینی',
                 role: 'مدیر ارشد، طراح برنامه و پدر خانواده',
@@ -813,3 +805,15 @@ void showMemberDetails(BuildContext context, FamilyMember member) {
             Center(
               child: TextButton(
                 onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text(
+                  'بستن',
+                  style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
