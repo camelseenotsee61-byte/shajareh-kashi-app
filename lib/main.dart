@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'family_member.dart';
 
 void main() {
@@ -110,11 +111,44 @@ class DashboardScreen extends StatelessWidget {
                       icon: const Icon(Icons.account_tree_rounded),
                       label: const Text(
                         'مشاهده شجره‌نامه خاندان',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.amber,
                         foregroundColor: Colors.black87,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(26),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const MemberSuggestionPage(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.person_add_alt_1),
+                      label: const Text(
+                        'پیشنهاد افزودن یا ویرایش عضو',
+                        style: TextStyle(
+                          color: Colors.amber,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Colors.amber),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(26),
                         ),
@@ -127,21 +161,337 @@ class DashboardScreen extends StatelessWidget {
                     height: 48,
                     child: OutlinedButton(
                       onPressed: () {},
-                      child: const Text(
-                        'مدیر ارشد و طراح: حمید حسینی',
-                        style: TextStyle(color: Colors.amber, fontSize: 13),
-                      ),
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: Colors.amber),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(26),
                         ),
                       ),
+                      child: const Text(
+                        'مدیر ارشد و طراح: حمید حسینی',
+                        style: TextStyle(color: Colors.amber, fontSize: 13),
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class MemberSuggestionPage extends StatefulWidget {
+  const MemberSuggestionPage({super.key});
+
+  @override
+  State<MemberSuggestionPage> createState() => _MemberSuggestionPageState();
+}
+
+class _MemberSuggestionPageState extends State<MemberSuggestionPage> {
+  final _formKey = GlobalKey<FormState>();
+
+  final _nameController = TextEditingController();
+  final _birthDateController = TextEditingController();
+  final _deathDateController = TextEditingController();
+  final _spouseController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _relationshipController = TextEditingController();
+
+  String _requestType = 'افزودن عضو جدید';
+  String? _preparedText;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _birthDateController.dispose();
+    _deathDateController.dispose();
+    _spouseController.dispose();
+    _descriptionController.dispose();
+    _relationshipController.dispose();
+    super.dispose();
+  }
+
+  String _valueOrEmpty(TextEditingController controller) {
+    final value = controller.text.trim();
+    return value.isEmpty ? 'ذکر نشده' : value;
+  }
+
+  void _prepareSuggestion() {
+    if (!_formKey.currentState!.validate()) return;
+
+    final text = [
+      'پیشنهاد $_requestType برای شجره‌نامه خاندان کاشی حسینی',
+      '',
+      'نام و نام خانوادگی: ${_valueOrEmpty(_nameController)}',
+      'نسبت با خاندان: ${_valueOrEmpty(_relationshipController)}',
+      'تاریخ تولد: ${_valueOrEmpty(_birthDateController)}',
+      'تاریخ وفات: ${_valueOrEmpty(_deathDateController)}',
+      'همسر: ${_valueOrEmpty(_spouseController)}',
+      'فرزندان یا توضیحات تکمیلی: ${_valueOrEmpty(_descriptionController)}',
+      '',
+      'این اطلاعات جهت بررسی و تأیید مدیر برنامه ارسال می‌شود.',
+    ].join('\n');
+
+    setState(() {
+      _preparedText = text;
+    });
+
+    FocusScope.of(context).unfocus();
+  }
+
+  Future<void> _copySuggestion() async {
+    final text = _preparedText;
+    if (text == null) return;
+
+    await Clipboard.setData(ClipboardData(text: text));
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('متن پیشنهاد کپی شد. اکنون می‌توانید آن را در پیام‌رسان بچسبانید.'),
+        duration: Duration(seconds: 4),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    String? hint,
+    int maxLines = 1,
+    bool requiredField = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: TextFormField(
+        controller: controller,
+        maxLines: maxLines,
+        textDirection: TextDirection.rtl,
+        style: const TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: hint,
+          labelStyle: const TextStyle(color: Colors.white70),
+          hintStyle: const TextStyle(color: Colors.white38),
+          prefixIcon: Icon(icon, color: Colors.amber),
+          filled: true,
+          fillColor: Colors.white.withOpacity(0.06),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.white24),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.white24),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.amber, width: 1.5),
+          ),
+        ),
+        validator: requiredField
+            ? (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'لطفاً نام فرد را وارد کنید';
+                }
+                return null;
+              }
+            : null,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        backgroundColor: const Color(0xFF0D2B1E),
+        appBar: AppBar(
+          backgroundColor: const Color(0xFF0D2B1E),
+          iconTheme: const IconThemeData(color: Colors.amber),
+          title: const Text(
+            'پیشنهاد اصلاح اطلاعات',
+            style: TextStyle(color: Colors.amber, fontSize: 17),
+          ),
+        ),
+        body: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.all(18),
+            children: [
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withOpacity(0.10),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.amber.withOpacity(0.5)),
+                ),
+                child: const Text(
+                  'مشخصات فرد را وارد کنید. پس از آماده‌کردن پیشنهاد، متن آن را کپی کنید و برای مدیر برنامه بفرستید. اطلاعات پس از بررسی و تأیید به شجره‌نامه افزوده می‌شود.',
+                  style: TextStyle(
+                    color: Colors.white,
+                    height: 1.7,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 18),
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    DropdownButtonFormField<String>(
+                      value: _requestType,
+                      dropdownColor: const Color(0xFF132B25),
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        labelText: 'نوع درخواست',
+                        labelStyle: const TextStyle(color: Colors.white70),
+                        prefixIcon: const Icon(
+                          Icons.edit_note_rounded,
+                          color: Colors.amber,
+                        ),
+                        filled: true,
+                        fillColor: Colors.white.withOpacity(0.06),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.white24),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.white24),
+                        ),
+                      ),
+                      items: const [
+                        DropdownMenuItem(
+                          value: 'افزودن عضو جدید',
+                          child: Text('افزودن عضو جدید'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'ویرایش اطلاعات عضو',
+                          child: Text('ویرایش اطلاعات عضو'),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        if (value == null) return;
+                        setState(() {
+                          _requestType = value;
+                          _preparedText = null;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 14),
+                    _buildTextField(
+                      controller: _nameController,
+                      label: 'نام و نام خانوادگی',
+                      icon: Icons.person_outline,
+                      hint: 'نام کامل فرد',
+                      requiredField: true,
+                    ),
+                    _buildTextField(
+                      controller: _relationshipController,
+                      label: 'نسبت با خاندان',
+                      icon: Icons.account_tree_outlined,
+                      hint: 'برای نمونه: فرزند، همسر، نوه',
+                    ),
+                    _buildTextField(
+                      controller: _birthDateController,
+                      label: 'تاریخ تولد',
+                      icon: Icons.cake_outlined,
+                      hint: 'برای نمونه: ۱۲ فروردین ۱۳۷۰',
+                    ),
+                    _buildTextField(
+                      controller: _deathDateController,
+                      label: 'تاریخ وفات، در صورت وجود',
+                      icon: Icons.eco_outlined,
+                    ),
+                    _buildTextField(
+                      controller: _spouseController,
+                      label: 'نام همسر، در صورت وجود',
+                      icon: Icons.favorite_border,
+                    ),
+                    _buildTextField(
+                      controller: _descriptionController,
+                      label: 'فرزندان یا توضیحات تکمیلی',
+                      icon: Icons.notes_rounded,
+                      hint: 'اطلاعات تکمیلی را اینجا بنویسید',
+                      maxLines: 4,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 4),
+              SizedBox(
+                height: 50,
+                child: ElevatedButton.icon(
+                  onPressed: _prepareSuggestion,
+                  icon: const Icon(Icons.description_outlined),
+                  label: const Text(
+                    'آماده‌کردن متن پیشنهاد',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.amber,
+                    foregroundColor: Colors.black87,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+              if (_preparedText != null) ...[
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.07),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.white24),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'متن آمادهٔ ارسال',
+                        style: TextStyle(
+                          color: Colors.amber,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      SelectableText(
+                        _preparedText!,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          height: 1.7,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: _copySuggestion,
+                          icon: const Icon(Icons.copy_rounded),
+                          label: const Text('کپی متن برای ارسال'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.amber,
+                            side: const BorderSide(color: Colors.amber),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              const SizedBox(height: 18),
+            ],
           ),
         ),
       ),
@@ -179,14 +529,16 @@ class FamilyTreePage extends StatelessWidget {
       birthDate: '۵ شهریور ۱۳۳۳',
       deathDate: '۲۹ آبان ۱۳۹۸',
       spouse: 'سرکار خانم عصمت بهجتی',
-      description: 'فرزند ارشد خانواده — فرزندان: محسن (متولد ۱۰ اسفند ۱۳۵۸)، جواد (متولد ۵ تیر ۱۳۶۲)، محمد (متولد ۳ اسفند ۱۳۶۳)، مهدیه (متولد ۲۵ مرداد ۱۳۶۵)، فاطمه (متولد ۸ شهریور ۱۳۷۱)',
+      description:
+          'فرزند ارشد خانواده — فرزندان: محسن (متولد ۱۰ اسفند ۱۳۵۸)، جواد (متولد ۵ تیر ۱۳۶۲)، محمد (متولد ۳ اسفند ۱۳۶۳)، مهدیه (متولد ۲۵ مرداد ۱۳۶۵)، فاطمه (متولد ۸ شهریور ۱۳۷۱)',
     ),
     FamilyMember(
       name: 'مرحوم حسین کاشی حسینی',
       birthDate: '۱ فروردین ۱۳۳۵',
       deathDate: '۲۰ آبان ۱۴۰۰',
       spouse: 'مرحومه معصومه قدمی',
-      description: 'فرزند خانواده — فرزندان: اعظم (متولد ۱۷ آبان ۱۳۵۷)، مهدی (متولد ۱ فروردین ۱۳۶۱)، سمیه (متولد ۳ اردیبهشت ۱۳۶۳)، محمد (متولد ۱۳۶۷)',
+      description:
+          'فرزند خانواده — فرزندان: اعظم (متولد ۱۷ آبان ۱۳۵۷)، مهدی (متولد ۱ فروردین ۱۳۶۱)، سمیه (متولد ۳ اردیبهشت ۱۳۶۳)، محمد (متولد ۱۳۶۷)',
     ),
     FamilyMember(
       name: 'جناب علی کاشی حسینی',
@@ -204,7 +556,8 @@ class FamilyTreePage extends StatelessWidget {
       name: 'سرکار خانم معصومه کاشی حسینی',
       birthDate: '۱ بهمن ۱۳۴۹',
       spouse: 'جناب رسول قدرتی',
-      description: 'فرزند خانواده — فرزندان: علی (متولد ۶ دی ۱۳۷۳)، فاطمه (متولد ۵ آبان ۱۳۷۵)، ساجده (متولد ۲۶ اسفند ۱۳۸۱)',
+      description:
+          'فرزند خانواده — فرزندان: علی (متولد ۶ دی ۱۳۷۳)، فاطمه (متولد ۵ آبان ۱۳۷۵)، ساجده (متولد ۲۶ اسفند ۱۳۸۱)',
     ),
     FamilyMember(
       name: 'سرکار خانم فاطمه کاشی حسینی',
@@ -216,7 +569,8 @@ class FamilyTreePage extends StatelessWidget {
       name: 'جناب حمید حسینی',
       birthDate: '۱۴ اسفند ۱۳۶۱',
       spouse: 'سرکار خانم منصوره رسولی (متولد ۲۴ دی ۱۳۶۲)',
-      description: 'مدیر ارشد، طراح برنامه و پدر خانواده — فرزندان: امیررضا حسینی (متولد ۲۱ اسفند ۱۳۸۶)، ریحانه حسینی (متولد ۱۲ شهریور ۱۳۹۰)، امیرعباس حسینی (متولد ۲۲ آذر ۱۳۹۳)، زینب حسینی (متولد ۲۲ دی ۱۳۹۵)',
+      description:
+          'مدیر ارشد، طراح برنامه و پدر خانواده — فرزندان: امیررضا حسینی (متولد ۲۱ اسفند ۱۳۸۶)، ریحانه حسینی (متولد ۱۲ شهریور ۱۳۹۰)، امیرعباس حسینی (متولد ۲۲ آذر ۱۳۹۳)، زینب حسینی (متولد ۲۲ دی ۱۳۹۵)',
     ),
   ];
 
@@ -270,7 +624,7 @@ class FamilyTreePage extends StatelessWidget {
     bool isHighlight = false,
     bool isDeceased = false,
   }) {
-    Color mainColor = isHighlight
+    final mainColor = isHighlight
         ? Colors.amber
         : (isDeceased ? Colors.white60 : Colors.tealAccent);
 
@@ -295,525 +649,4 @@ class FamilyTreePage extends StatelessWidget {
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             color: isHighlight
-                ? Colors.amber.withOpacity(0.12)
-                : Colors.white.withOpacity(0.06),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: isHighlight ? Colors.amber : Colors.white12,
-              width: isHighlight ? 1.5 : 1,
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 18,
-                    backgroundColor: mainColor.withOpacity(0.2),
-                    child: Icon(
-                      isDeceased ? Icons.eco_outlined : Icons.person_rounded,
-                      color: mainColor,
-                      size: 20,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          name,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          role,
-                          style: TextStyle(color: mainColor, fontSize: 12),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              if (birthDate != null || deathDate != null || spouse != null)
-                const Divider(color: Colors.white12, height: 16),
-              if (birthDate != null)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2),
-                  child: Row(
-                    children: [
-                      const Text('🎂 تولد: ',
-                          style: TextStyle(color: Colors.white70, fontSize: 12)),
-                      Text(birthDate,
-                          style: const TextStyle(color: Colors.white, fontSize: 12)),
-                    ],
-                  ),
-                ),
-              if (deathDate != null)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2),
-                  child: Row(
-                    children: [
-                      const Text('🕊 وفات: ',
-                          style: TextStyle(color: Colors.white54, fontSize: 12)),
-                      Text(deathDate,
-                          style: const TextStyle(color: Colors.white70, fontSize: 12)),
-                    ],
-                  ),
-                ),
-              if (spouse != null)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2),
-                  child: Row(
-                    children: [
-                      const Text('💍 همسر: ',
-                          style: TextStyle(color: Colors.white70, fontSize: 12)),
-                      Text(spouse,
-                          style: const TextStyle(
-                              color: Colors.amberAccent, fontSize: 12)),
-                    ],
-                  ),
-                ),
-              if (children != null && children.isNotEmpty) ...[
-                const SizedBox(height: 6),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.black26,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('👥 فرزندان:',
-                          style: TextStyle(
-                              color: Colors.amber,
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 4),
-                      ...children.map((child) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 1),
-                            child: Text('• $child',
-                                style: const TextStyle(
-                                    color: Colors.white70, fontSize: 11)),
-                          )),
-                    ],
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: const Color(0xFF0D2B1E),
-        appBar: AppBar(
-          backgroundColor: const Color(0xFF0D2B1E),
-          elevation: 0,
-          title: const Text(
-            'شجره‌نامه خاندان کاشی حسینی',
-            style: TextStyle(color: Colors.amber, fontSize: 16),
-          ),
-          iconTheme: const IconThemeData(color: Colors.amber),
-          actions: [
-            IconButton(
-              tooltip: 'جستجوی اعضا',
-              icon: const Icon(Icons.search_rounded),
-              onPressed: () {
-                showSearch(
-                  context: context,
-                  delegate: FamilySearchDelegate(allMembersList),
-                );
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.help_outline),
-              onPressed: () {
-                _showHelpDialog(context);
-              },
-            ),
-          ],
-        ),
-        body: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-            children: [
-              // ================= نسل اول =================
-              _buildSectionTitle('نسل اول: سرسلسله و اجداد',
-                  'پدربزرگ‌ها و مادربزرگ‌های والامقام'),
-              _buildPersonCard(
-                name: 'مرحوم باقر و مرحومه سیده عالیه بیگم موسوی',
-                role: 'اجداد پدری خاندان',
-                isDeceased: true,
-              ),
-              _buildPersonCard(
-                name: 'مرحوم محمدحسن حسینی و مرحومه آقا سلطان فتحعلی',
-                role: 'اجداد مادری خاندان',
-                isDeceased: true,
-              ),
-
-              // ================= نسل دوم =================
-              _buildSectionTitle(
-                  'نسل دوم: پدر و مادر ارجمند', 'بنیان‌گذاران این شاخه از خاندان'),
-              _buildPersonCard(
-                name: 'مرحوم میرزا محمدعلی کاشی حسینی',
-                role: 'پدر بزرگوار',
-                birthDate: '۶ اردیبهشت ۱۳۰۷',
-                deathDate: '۶ بهمن ۱۳۸۲',
-                isDeceased: true,
-              ),
-              _buildPersonCard(
-                name: 'مرحومه جمیله حسینی',
-                role: 'مادر مهربان',
-                birthDate: '۲۰ شهریور ۱۳۱۷',
-                deathDate: '۱۱ دی ۱۴۰۳',
-                isDeceased: true,
-              ),
-
-              // ================= نسل سوم =================
-              _buildSectionTitle(
-                  'نسل سوم: فرزندان و شاخه‌های خانواده', 'برادران، خواهران و همسران محترم'),
-
-              _buildPersonCard(
-                name: 'مرحوم حسن کاشی حسینی',
-                role: 'فرزند ارشد خانواده',
-                birthDate: '۵ شهریور ۱۳۳۳',
-                deathDate: '۲۹ آبان ۱۳۹۸',
-                spouse: 'سرکار خانم عصمت بهجتی',
-                isDeceased: true,
-                children: [
-                  'محسن (متولد ۱۰ اسفند ۱۳۵۸)',
-                  'جواد (متولد ۵ تیر ۱۳۶۲)',
-                  'محمد (متولد ۳ اسفند ۱۳۶۳)',
-                  'مهدیه (متولد ۲۵ مرداد ۱۳۶۵)',
-                  'فاطمه (متولد ۸ شهریور ۱۳۷۱)',
-                ],
-              ),
-
-              _buildPersonCard(
-                name: 'مرحوم حسین کاشی حسینی',
-                role: 'فرزند خانواده',
-                birthDate: '۱ فروردین ۱۳۳۵',
-                deathDate: '۲۰ آبان ۱۴۰۰',
-                spouse: 'مرحومه معصومه قدمی',
-                isDeceased: true,
-                children: [
-                  'اعظم (متولد ۱۷ آبان ۱۳۵۷)',
-                  'مهدی (متولد ۱ فروردین ۱۳۶۱)',
-                  'سمیه (متولد ۳ اردیبهشت ۱۳۶۳)',
-                  'محمد (متولد ۱۳۶۷)',
-                ],
-              ),
-
-              _buildPersonCard(
-                name: 'جناب علی کاشی حسینی',
-                role: 'فرزند خانواده',
-                birthDate: '۱ فروردین ۱۳۳۹',
-                spouse: 'سرکار خانم زهرا بیدگلی',
-                children: [
-                  'زینب',
-                  'صغرا',
-                  'حسن',
-                ],
-              ),
-
-              _buildPersonCard(
-                name: 'سرکار خانم صغرا کاشی حسینی',
-                role: 'فرزند خانواده',
-                birthDate: '۱ فروردین ۱۳۴۸',
-                spouse: 'جناب قاسم حسینی',
-                children: [
-                  'امیر (متولد ۲۷ آذر ۱۳۶۲)',
-                ],
-              ),
-
-              _buildPersonCard(
-                name: 'سرکار خانم معصومه کاشی حسینی',
-                role: 'فرزند خانواده',
-                birthDate: '۱ بهمن ۱۳۴۹',
-                spouse: 'جناب رسول قدرتی',
-                children: [
-                  'علی (متولد ۶ دی ۱۳۷۳)',
-                  'فاطمه (متولد ۵ آبان ۱۳۷۵)',
-                  'ساجده (متولد ۲۶ اسفند ۱۳۸۱)',
-                ],
-              ),
-
-              _buildPersonCard(
-                name: 'سرکار خانم فاطمه کاشی حسینی',
-                role: 'فرزند خانواده',
-                birthDate: '۷ تیر ۱۳۵۴',
-                spouse: 'جناب سعید بیدگلی',
-                children: [
-                  'حامد',
-                  'زهرا',
-                  'امیرمحمد',
-                ],
-              ),
-
-              _buildPersonCard(
-                name: 'جناب حمید حسینی',
-                role: 'مدیر ارشد، طراح برنامه و پدر خانواده',
-                birthDate: '۱۴ اسفند ۱۳۶۱',
-                spouse: 'سرکار خانم منصوره رسولی (متولد ۲۴ دی ۱۳۶۲)',
-                isHighlight: true,
-                children: [
-                  'امیررضا حسینی (متولد ۲۱ اسفند ۱۳۸۶)',
-                  'ریحانه حسینی (متولد ۱۲ شهریور ۱۳۹۰)',
-                  'امیرعباس حسینی (متولد ۲۲ آذر ۱۳۹۳)',
-                  'زینب حسینی (متولد ۲۲ دی ۱۳۹۵)',
-                ],
-              ),
-
-              const SizedBox(height: 25),
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.04),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Text(
-                  '🌱 این اطلاعات به عنوان گنجینه هویتی خاندان کاشی حسینی ثبت و به یادگار خواهد ماند.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white54, fontSize: 12, height: 1.6),
-                ),
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showHelpDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF0D2B1E),
-        title: const Text(
-          'راهنمای نرم‌افزار 💡',
-          style: TextStyle(color: Colors.amber, fontSize: 18),
-          textAlign: TextAlign.right,
-        ),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text(
-                'این برنامه گنجینه‌ای برای ثبت و ماندگاری شجره‌نامه خاندان کاشی حسینی است.',
-                style: TextStyle(color: Colors.white, fontSize: 13, height: 1.6),
-                textAlign: TextAlign.right,
-              ),
-              SizedBox(height: 12),
-              Text('🔍 : جستجوی سریع اعضا', style: TextStyle(color: Colors.white70, fontSize: 13)),
-              Text('🎂 : تاریخ تولد', style: TextStyle(color: Colors.white70, fontSize: 13)),
-              Text('🕊 : یادبود درگذشتگان', style: TextStyle(color: Colors.white70, fontSize: 13)),
-              Text('💍 : همسر', style: TextStyle(color: Colors.white70, fontSize: 13)),
-              Text('👥 : فرزندان', style: TextStyle(color: Colors.white70, fontSize: 13)),
-              SizedBox(height: 14),
-              Text(
-                'طراح و مدیر پروژه: حمید حسینی',
-                style: TextStyle(color: Colors.amber, fontSize: 13, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.right,
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('بستن', style: TextStyle(color: Colors.amber)),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// --- قابلیت جستجوی هوشمند در کل خاندان ---
-class FamilySearchDelegate extends SearchDelegate {
-  final List<FamilyMember> members;
-
-  FamilySearchDelegate(this.members)
-      : super(
-          searchFieldLabel: 'نام فرد یا شاخه را جستجو کنید...',
-          searchFieldStyle: const TextStyle(color: Colors.amber, fontSize: 15),
-        );
-
-  @override
-  ThemeData appBarTheme(BuildContext context) {
-    return ThemeData(
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFF0D2B1E),
-        iconTheme: IconThemeData(color: Colors.amber),
-      ),
-      inputDecorationTheme: const InputDecorationTheme(
-        border: InputBorder.none,
-        hintStyle: TextStyle(color: Colors.white54, fontSize: 14),
-      ),
-      scaffoldBackgroundColor: const Color(0xFF0D2B1E),
-    );
-  }
-
-  @override
-  List<Widget>? buildActions(BuildContext context) {
-    return [
-      if (query.isNotEmpty)
-        IconButton(
-          icon: const Icon(Icons.clear, color: Colors.amber),
-          onPressed: () => query = '',
-        ),
-    ];
-  }
-
-  @override
-  Widget? buildLeading(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.arrow_back, color: Colors.amber),
-      onPressed: () => close(context, null),
-    );
-  }
-
-  @override
-  Widget buildResults(BuildContext context) => _buildSearchResults(context);
-
-  @override
-  Widget buildSuggestions(BuildContext context) => _buildSearchResults(context);
-
-  Widget _buildSearchResults(BuildContext context) {
-    final cleanQuery = query.trim().toLowerCase();
-    final results = members.where((m) {
-      final nameMatch = m.name.toLowerCase().contains(cleanQuery);
-      final descMatch = (m.description ?? '').toLowerCase().contains(cleanQuery);
-      final spouseMatch = (m.spouse ?? '').toLowerCase().contains(cleanQuery);
-      return nameMatch || descMatch || spouseMatch;
-    }).toList();
-
-    if (results.isEmpty) {
-      return Center(
-        child: Text(
-          cleanQuery.isEmpty ? 'نام یکی از اعضا را تایپ کنید...' : 'موردی یافت نشد',
-          style: const TextStyle(color: Colors.white54, fontSize: 14),
-        ),
-      );
-    }
-
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: ListView.builder(
-        itemCount: results.length,
-        itemBuilder: (context, index) {
-          final member = results[index];
-          return ListTile(
-            leading: const CircleAvatar(
-              backgroundColor: Colors.white10,
-              child: Icon(Icons.person, color: Colors.amber),
-            ),
-            title: Text(
-              member.name,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text(
-              member.description ?? member.spouse ?? '',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: Colors.white60, fontSize: 12),
-            ),
-            onTap: () {
-              showMemberDetails(context, member);
-            },
-          );
-        },
-      ),
-    );
-  }
-}
-
-// --- تابع نمایش دیالوگ مشخصات فرد ---
-void showMemberDetails(BuildContext context, FamilyMember member) {
-  showDialog(
-    context: context,
-    builder: (BuildContext ctx) {
-      return Directionality(
-        textDirection: TextDirection.rtl,
-        child: AlertDialog(
-          backgroundColor: const Color(0xFF132B25),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(color: Color(0xFFD4AF37), width: 1.5),
-          ),
-          title: Text(
-            member.name,
-            style: const TextStyle(
-              color: Color(0xFFD4AF37),
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (member.birthDate != null)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Text(
-                    '🎂 تاریخ تولد: ${member.birthDate}',
-                    style: const TextStyle(color: Colors.white, fontSize: 14),
-                  ),
-                ),
-              if (member.deathDate != null)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Text(
-                    '🕊️ یادبود درگذشتگان: ${member.deathDate}',
-                    style: const TextStyle(color: Colors.white70, fontSize: 14),
-                  ),
-                ),
-              if (member.spouse != null)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Text(
-                    '💍 همسر: ${member.spouse}',
-                    style: const TextStyle(color: Colors.white, fontSize: 14),
-                  ),
-                ),
-              if (member.description != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Text(
-                    '📝 توضیحات: ${member.description}',
-                    style: const TextStyle(color: Colors.white60, fontSize: 13),
-                  ),
-                ),
-            ],
-          ),
-          actions: [
-            Center(
-              child: TextButton(
-                onPressed: () => Navigator.of(ctx).pop(),
-                child: const Text(
-                  'بستن',
-                  style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
+                ? Colors.amber.withOpacity(0.
