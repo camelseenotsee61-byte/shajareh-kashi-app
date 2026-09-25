@@ -649,4 +649,292 @@ class FamilyTreePage extends StatelessWidget {
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             color: isHighlight
-                ? Colors.amber.withOpacity(0.
+                 ? Colors.amber.withOpacity(0.16)
+                : Colors.white.withOpacity(0.06),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: isHighlight ? Colors.amber : Colors.white24,
+              width: isHighlight ? 1.5 : 1,
+            ),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircleAvatar(
+                radius: 22,
+                backgroundColor: mainColor.withOpacity(0.15),
+                child: Icon(
+                  isDeceased ? Icons.local_florist_outlined : Icons.person,
+                  color: mainColor,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: TextStyle(
+                        color: mainColor,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      role,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                        height: 1.5,
+                      ),
+                    ),
+                    if (birthDate != null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        'تولد: $birthDate',
+                        style: const TextStyle(
+                          color: Colors.white54,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                    if (deathDate != null) ...[
+                      const SizedBox(height: 3),
+                      Text(
+                        'وفات: $deathDate',
+                        style: const TextStyle(
+                          color: Colors.white54,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                    if (spouse != null) ...[
+                      const SizedBox(height: 3),
+                      Text(
+                        'همسر: $spouse',
+                        style: const TextStyle(
+                          color: Colors.white54,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              const Icon(
+                Icons.chevron_left,
+                color: Colors.white38,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        backgroundColor: const Color(0xFF0D2B1E),
+        appBar: AppBar(
+          backgroundColor: const Color(0xFF0D2B1E),
+          iconTheme: const IconThemeData(color: Colors.amber),
+          title: const Text(
+            'شجره‌نامه خاندان کاشی حسینی',
+            style: TextStyle(color: Colors.amber, fontSize: 17),
+          ),
+        ),
+        body: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+          children: [
+            _buildSectionTitle(
+              'ریشه‌های خاندان',
+              'پدربزرگ‌ها و مادربزرگ‌های خاندان',
+            ),
+            _buildPersonCard(
+              name: 'مرحوم باقر و مرحومه سیده عالیه بیگم موسوی',
+              role: 'اجداد پدری خاندان',
+              isDeceased: true,
+            ),
+            _buildPersonCard(
+              name: 'مرحوم محمدحسن حسینی و مرحومه آقا سلطان فتحعلی',
+              role: 'اجداد مادری خاندان',
+              isDeceased: true,
+            ),
+            _buildSectionTitle(
+              'پدر و مادر',
+              'نسل بعدی خاندان',
+            ),
+            _buildPersonCard(
+              name: 'مرحوم میرزا محمدعلی کاشی حسینی',
+              role: 'پدر بزرگوار',
+              birthDate: '۶ اردیبهشت ۱۳۰۷',
+              deathDate: '۶ بهمن ۱۳۸۲',
+              isDeceased: true,
+            ),
+            _buildPersonCard(
+              name: 'مرحومه جمیله حسینی',
+              role: 'مادر مهربان',
+              birthDate: '۲۰ شهریور ۱۳۱۷',
+              deathDate: '۱۱ دی ۱۴۰۳',
+              isDeceased: true,
+            ),
+            _buildSectionTitle(
+              'فرزندان خانواده',
+              'برای مشاهدهٔ جزئیات هر فرد، کارت او را لمس کنید',
+            ),
+            _buildPersonCard(
+              name: 'مرحوم حسن کاشی حسینی',
+              role: 'فرزند ارشد خانواده',
+              birthDate: '۵ شهریور ۱۳۳۳',
+              deathDate: '۲۹ آبان ۱۳۹۸',
+              spouse: 'سرکار خانم عصمت بهجتی',
+              children: [
+                'محسن (۱۰ اسفند ۱۳۵۸)',
+                'جواد (۵ تیر ۱۳۶۲)',
+                'محمد (۳ اسفند ۱۳۶۳)',
+                'مهدیه (۲۵ مرداد ۱۳۶۵)',
+                'فاطمه (۸ شهریور ۱۳۷۱)',
+              ],
+              isDeceased: true,
+            ),
+            _buildPersonCard(
+              name: 'مرحوم حسین کاشی حسینی',
+              role: 'فرزند خانواده',
+              birthDate: '۱ فروردین ۱۳۳۵',
+              deathDate: '۲۰ آبان ۱۴۰۰',
+              spouse: 'مرحومه معصومه قدمی',
+              children: [
+                'اعظم (۱۷ آبان ۱۳۵۷)',
+                'مهدی (۱ فروردین ۱۳۶۱)',
+                'سمیه (۳ اردیبهشت ۱۳۶۳)',
+                'محمد (۱۳۶۷)',
+              ],
+              isDeceased: true,
+            ),
+            _buildPersonCard(
+              name: 'جناب علی کاشی حسینی',
+              role: 'فرزند خانواده',
+              birthDate: '۱ فروردین ۱۳۳۹',
+              spouse: 'سرکار خانم زهرا بیدگلی',
+              children: ['زینب', 'صغرا', 'حسن'],
+            ),
+            _buildPersonCard(
+              name: 'سرکار خانم صغرا کاشی حسینی',
+              role: 'فرزند خانواده',
+              birthDate: '۱ فروردین ۱۳۴۸',
+              spouse: 'جناب قاسم حسینی',
+              children: ['امیر (۲۷ آذر ۱۳۶۲)'],
+            ),
+            _buildPersonCard(
+              name: 'سرکار خانم معصومه کاشی حسینی',
+              role: 'فرزند خانواده',
+              birthDate: '۱ بهمن ۱۳۴۹',
+              spouse: 'جناب رسول قدرتی',
+              children: [
+                'علی (۶ دی ۱۳۷۳)',
+                'فاطمه (۵ آبان ۱۳۷۵)',
+                'ساجده (۲۶ اسفند ۱۳۸۱)',
+              ],
+            ),
+            _buildPersonCard(
+              name: 'سرکار خانم فاطمه کاشی حسینی',
+              role: 'فرزند خانواده',
+              birthDate: '۷ تیر ۱۳۵۴',
+              spouse: 'جناب سعید بیدگلی',
+              children: ['حامد', 'زهرا', 'امیرمحمد'],
+            ),
+            _buildPersonCard(
+              name: 'جناب حمید حسینی',
+              role: 'مدیر ارشد، طراح برنامه و پدر خانواده',
+              birthDate: '۱۴ اسفند ۱۳۶۱',
+              spouse: 'سرکار خانم منصوره رسولی (متولد ۲۴ دی ۱۳۶۲)',
+              children: [
+                'امیررضا حسینی (۲۱ اسفند ۱۳۸۶)',
+                'ریحانه حسینی (۱۲ شهریور ۱۳۹۰)',
+                'امیرعباس حسینی (۲۲ آذر ۱۳۹۳)',
+                'زینب حسینی (۲۲ دی ۱۳۹۵)',
+              ],
+              isHighlight: true,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+void showMemberDetails(BuildContext context, FamilyMember member) {
+  showDialog<void>(
+    context: context,
+    builder: (dialogContext) {
+      return Directionality(
+        textDirection: TextDirection.rtl,
+        child: AlertDialog(
+          backgroundColor: const Color(0xFF17382B),
+          title: Text(
+            member.name,
+            style: const TextStyle(
+              color: Colors.amber,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (member.birthDate != null)
+                  _detailRow('تاریخ تولد', member.birthDate!),
+                if (member.deathDate != null)
+                  _detailRow('تاریخ وفات', member.deathDate!),
+                if (member.spouse != null)
+                  _detailRow('همسر', member.spouse!),
+                if (member.description != null)
+                  _detailRow('توضیحات', member.description!),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text(
+                'بستن',
+                style: TextStyle(color: Colors.amber),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+Widget _detailRow(String label, String value) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 10),
+    child: RichText(
+      text: TextSpan(
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 13,
+          height: 1.6,
+        ),
+        children: [
+          TextSpan(
+            text: '$label: ',
+            style: const TextStyle(
+              color: Colors.amber,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          TextSpan(text: value),
+        ],
+      ),
+    ),
+  );
+}
